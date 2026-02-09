@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
-      <h1>CCJA PWA</h1>
+      <h1>ESPACE MEMBRE !!</h1>
     </div>
   );
 }

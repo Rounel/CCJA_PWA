@@ -28,7 +28,7 @@ export default function SignInPage() {
         return;
       }
 
-      router.push("/");
+      router.push("/me/home");
     } catch {
       setError("Une erreur est survenue lors de la connexion");
     } finally {
@@ -40,7 +40,7 @@ export default function SignInPage() {
     setError("");
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL: "/me/home",
     });
   };
 
@@ -48,7 +48,7 @@ export default function SignInPage() {
     setError("");
     await authClient.signIn.social({
       provider: "linkedin",
-      callbackURL: "/",
+      callbackURL: "/me/home",
     });
   };
 

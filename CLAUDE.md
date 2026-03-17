@@ -16,44 +16,50 @@ This is a **Next.js 16** PWA (Progressive Web App) using the App Router with Typ
 
 ### Tech Stack
 - **Framework**: Next.js 16 with App Router
-- **Auth**: Better Auth with PostgreSQL (via `pg` pool)
+- **Database / Storage**: Supabase (`@supabase/supabase-js`)
 - **Styling**: Tailwind CSS v4 (using `@tailwindcss/postcss`)
-- **Database**: PostgreSQL (Supabase connection string)
 
 ### Project Structure
 ```
 src/
-├── app/           # Next.js App Router pages
-│   ├── auth/      # Authentication pages (sign-in, sign-up, forgot password)
-│   └── layout.tsx # Root layout with Geist fonts
-├── api/
-│   └── auth/[...all]/route.ts  # Better Auth API handler
+├── app/
+│   ├── inscription/   # Member registration form
+│   ├── me/            # Member space (home, layout with BottomNav)
+│   └── layout.tsx     # Root layout with Geist fonts
+├── components/
+│   └── bottom-nav.tsx # Bottom navigation
 └── lib/
-    ├── auth.ts        # Server-side Better Auth config
-    └── auth-client.ts # Client-side auth (React hooks)
+    └── supabase.ts    # Supabase client (anon key)
 ```
 
 ### Path Aliases
 - `@/*` maps to `./src/*`
 
-### Authentication
-- Better Auth configured with email/password + social providers (Google, LinkedIn)
-- Server auth: `import { auth } from "@/lib/auth"`
-- Client auth: `import { authClient } from "@/lib/auth-client"`
-- Auth API routes handled via catch-all route at `/api/auth/[...all]`
+### Supabase
+- Client: `import { supabase } from "@/lib/supabase"`
+- Uses `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
 
-### User Model (Additional Fields)
-Extended user schema with `user.additionalFields`:
-| Field | Type | Default | Input | Description |
-|-------|------|---------|-------|-------------|
-| `numero` | string | `""` | true | Numéro de téléphone |
-| `profession` | string | `""` | true | Profession de l'utilisateur |
-| `linkedinUrl` | string | `""` | true | Lien vers le profil LinkedIn |
-| `role` | string | `"user"` | false | Rôle (non modifiable à l'inscription) |
+### Database Schema
+
+#### Table `membres`
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | uuid | PK, default `gen_random_uuid()` |
+| `nom` | text | Required, stored uppercase |
+| `prenoms` | text | Required |
+| `email` | text | Unique, required |
+| `telephone` | text | Optional, includes country code |
+| `profession` | text | Required |
+| `linkedin_url` | text | Optional |
+| `photo_url` | text | Optional, Supabase Storage URL |
+| `statut` | text | Default `'en_attente'` |
+| `created_at` | timestamptz | Default `now()` |
+
+#### Storage bucket
+- `membres-photos` — public bucket for member profile photos
 
 ## Environment Variables
 
 Required environment variables (see `.env`):
-- `NEXT_PUBLIC_SUPABASE_URL` - PostgreSQL connection string
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` - Google OAuth
-- `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` - LinkedIn OAuth
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` - Supabase anon/publishable key
